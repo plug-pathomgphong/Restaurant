@@ -36,10 +36,7 @@ export default {
   },
   methods:{
     searchData(){
-        /*axios.get('https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+'+this.search+'&key=AIzaSyCV3Rukpo1q6KiPKT84BJlXFm00BXWDZSE')
-          .then(res=> this.items = res )
-          .catch(err => console.log(err))
-        */
+        
        axios.get('http://localhost:8080/restaurant-ex.json')
           .then(res=> this.items = res.data.results )
           .catch(err => console.log(err))
