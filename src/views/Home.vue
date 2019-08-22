@@ -120,7 +120,7 @@ export default {
       //json example : '/restaurant-ex.json'
       axios
         .get(
-          "https://maps.googleapis.com/maps/api/place/textsearch/jsonp?query=123+main+street&key=API_KEY"
+          'https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+'+this.search+'&key=API_KEY'
         )
         .then(res => {
           this.items = res.data.results;
