@@ -50,16 +50,7 @@ export default {
           infowindow.setContent(results.name);
           infowindow.open(this.map, this);
         });
-        /*
-        let infoWindow = new google.maps.InfoWindow({
-            content: this.map[i].name
-          });
-
-          this.infoWindows.push(infoWindow);
-          marker.addListener('click', function() {
-          infoWindow.open(this.map, this);
-        });
-        */
+    
       },
       loadData(){
         this.GetLatlong()
@@ -83,7 +74,7 @@ export default {
 
       },
       placeSearch(){
-        //let vm = this
+        
           this.bounds = new google.maps.LatLngBounds();
           const element = document.getElementById(this.mapName)
           const mapCentre = this.markerCoordinates[0]

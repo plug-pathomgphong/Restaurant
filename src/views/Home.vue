@@ -29,7 +29,7 @@
         <template slot="[vicinity]" slot-scope="data">
           <div class="text-left">{{ data.item.vicinity }}</div>
         </template>
-        <!--.item.opening_hours.open_now | openClose-->
+       
         <template slot="[Status]" slot-scope="data">{{ data.item.opening_hours | openClose }}</template>
 
         <template slot="[location]" slot-scope="data">
