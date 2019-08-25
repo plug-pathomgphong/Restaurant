@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import BootstrapVue from 'bootstrap-vue'
-import * as VueGoogleMaps from 'vue2-google-maps'
+//import * as VueGoogleMaps from 'vue2-google-maps'
 Vue.use(BootstrapVue)
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -11,18 +11,19 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.config.productionTip = false
 
 import axios from 'axios'
-
+axios.defaults.baseURL = 'https://maps.googleapis.com'
 axios.defaults.headers.common['Access-Control-Allow-Headers'] = '*';
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.defaults.headers.get['Accepts'] = 'application/json'
-
+/*
 Vue.use(VueGoogleMaps, {
   load: {
-    key: "API_KEY",
+    key: "AIzaSyBnZUekCGB5R9NeP1WptM5qyXhyNbmAih4",
     libraries: "places" // necessary for places input
   }
 });
+*/
 
 new Vue({
   router,

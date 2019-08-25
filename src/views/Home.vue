@@ -11,14 +11,7 @@
     </div>
 
     <div class="mb-3">
-      <gmap-map :center="center" :zoom="12" style="width:100%;  height: 400px;">
-        <gmap-marker
-          :key="index"
-          v-for="(m, index) in markers"
-          :position="m.position"
-          @click="center=m.position"
-        ></gmap-marker>
-      </gmap-map>
+      <google-map name="example" :inputSearch="currentPlace" @dataSearch="getDataList"></google-map>
     </div>
 
     <div v-if="items.length">
@@ -33,17 +26,17 @@
           <div class="text-left">{{ data.item.name }}</div>
         </template>
 
-        <template slot="[formatted_address]" slot-scope="data">
-          <div class="text-left">{{ data.item.formatted_address }}</div>
+        <template slot="[vicinity]" slot-scope="data">
+          <div class="text-left">{{ data.item.vicinity }}</div>
         </template>
-
-        <template
-          slot="[opening_hours.open_now]"
-          slot-scope="data"
-        >{{ data.item.opening_hours.open_now |openClose }}</template>
+        <!--.item.opening_hours.open_now | openClose-->
+        <template slot="[Status]" slot-scope="data">{{ data.item.opening_hours | openClose }}</template>
 
         <template slot="[location]" slot-scope="data">
-          <a :href="'http://maps.google.com/?q='+data.item.name">Google Map</a>
+          <a
+            :href="'http://maps.google.com/?q='+data.item.name+','+data.item.geometry.location.lat+','+data.item.geometry.location.lng"
+            target="new"
+          >Google Map</a>
         </template>
       </b-table>
       <b-pagination
@@ -58,20 +51,25 @@
 </template>
 
 <script>
-
+import VueGoogleAutocomplete from "vue-google-autocomplete";
+import googleMap from "../components/Google";
 import axios from "axios";
 export default {
   name: "home",
   data() {
     return {
-      perPage: 10,
+      perPage: 15,
       currentPage: 1,
       search: "Bangsue",
       fields: [
-        "name",
-        { key: "formatted_address", label: "Address" },
-        { key: "opening_hours.open_now", label: "Open" },
-        "location"
+        { key: "name", label: "ชื่อร้านอาหาร", class: "w-20" },
+        { key: "vicinity", label: "ที่อยู่", class: "w-50" },
+        {
+          key: "opening_hours.open_now",
+          label: "สถานะเปิดร้าน",
+          class: "w-10"
+        },
+        { key: "location", label: "location", class: "w-20" }
       ],
       items: [],
       center: { lat: 45.508, lng: -73.587 },
@@ -86,9 +84,9 @@ export default {
     }
   },
   created() {
-    this.searchData();
     if (localStorage.search) {
       this.search = localStorage.search;
+      this.currentPlace = localStorage.search;
     }
   },
   computed: {
@@ -96,42 +94,57 @@ export default {
       return this.items.length;
     }
   },
-  components: {},
-  mounted() {},
+  components: { googleMap },
+  mounted() {
+    this.getDataList();
+  },
   methods: {
-    addMarker() {
-      if (this.items) {
-        const marker = this.items.map(res => {
-          return {
-            position: {
-              lat: res.geometry.location.lat,
-              lng: res.geometry.location.lng
+    getDataList(value) {
+      if (value) {
+        value.forEach(data => {
+          let dataopen;
+          if (data.opening_hours) {
+            if (data.opening_hours.open_now) {
+              dataopen = "Open";
+            } else {
+              dataopen = "Close";
             }
-          };
+          } else {
+            dataopen = "-";
+          }
+          this.items.push({
+            geometry: {
+              location: {
+                lat: data.geometry.location.lat(),
+                lng: data.geometry.location.lng()
+              }
+            },
+            icon: data.icon,
+            name: data.name,
+            opening_hours: { open_now: dataopen },
+            rating: data.rating,
+            vicinity: data.vicinity
+          });
         });
-
-        this.markers = marker;
-        this.places.push(this.items);
-        this.center = { lat: 13.736717, lng: 100.523186 };
-        this.currentPlace = null;
       }
     },
     searchData() {
-      //json example : '/restaurant-ex.json'
-      axios
-        .get(
-          'https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+'+this.search+'&key=API_KEY'
-        )
-        .then(res => {
-          this.items = res.data.results;
-          this.addMarker();
-          localStorage.search = this.search;
-        })
-        .catch(err => console.log(err.data));
+      localStorage.search = this.search;
+      this.currentPlace = this.search;
+      this.items = []
     }
   }
 };
 </script>
 
-<style lang="" >
+<style lang="css" scoped>
+.w-10 {
+  width: 10%;
+}
+.w-20 {
+  width: 20%;
+}
+.w-50 {
+  width: 50%;
+}
 </style>
